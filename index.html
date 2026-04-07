@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nila — Happy Birthday 🌕</title>
+<link rel="stylesheet" href="style.css"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=Great+Vibes&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+<!-- Three.js + GLTF Loader -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.158/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.158/examples/js/loaders/GLTFLoader.js"></script>
+</head>
+<body data-phase="intro">
+
+<!-- SVG Definitions (reusable filters & gradients) -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden">
+  <defs>
+    <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="glowBig"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="glowSoft"><feGaussianBlur stdDeviation="5" result="b"/><feColorMatrix in="b" type="matrix" values="1 0 0 0 0.1  0 1 0 0 0.05  0 0 1 0 0  0 0 0 0.6 0" result="gb"/><feMerge><feMergeNode in="gb"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <linearGradient id="gG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f0d5a8"/><stop offset="100%" stop-color="#d4a574"/></linearGradient>
+    <linearGradient id="sunG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffd700"/><stop offset="50%" stop-color="#ffa040"/><stop offset="100%" stop-color="#ff6b35"/></linearGradient>
+    <radialGradient id="moonG" cx="35%" cy="35%"><stop offset="0%" stop-color="#f5f0e8"/><stop offset="60%" stop-color="#e0d8c8"/><stop offset="100%" stop-color="#b8b0a0"/></radialGradient>
+    <linearGradient id="purpleG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c8b8f8"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient>
+  </defs>
+</svg>
+
+<!-- Morph Transition Overlay -->
+<div class="morph-overlay" id="morphOverlay"></div>
+
+<!-- 3D Canvas -->
+<canvas id="bg"></canvas>
+
+<!-- Cosmic Background Layer -->
+<div class="cosmic-bg" id="cosmicBg"></div>
+
+<!-- Shooting Stars Layer -->
+<div class="shooting-stars" id="shootingStars">
+  <div class="shooting-star"></div>
+  <div class="shooting-star s2"></div>
+  <div class="shooting-star s3"></div>
+  <div class="shooting-star s4"></div>
+  <div class="shooting-star s5"></div>
+</div>
+
+<!-- Floating Particles -->
+<div class="particles-layer" id="particles"></div>
+
+<!-- Nebula Glow Orbs -->
+<div class="nebula-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<!-- SVG Vector Decorations (floating stars, crescents, sparkles) -->
+<div class="svg-deco-layer" id="svgDecoLayer">
+  <svg class="deco ds1" viewBox="0 0 24 24"><path d="M12 0L14 10 24 12 14 14 12 24 10 14 0 12 10 10Z" fill="url(#gG)" opacity=".3" filter="url(#glow)"/></svg>
+  <svg class="deco ds2" viewBox="0 0 24 24"><path d="M12 0L14 10 24 12 14 14 12 24 10 14 0 12 10 10Z" fill="#fff" opacity=".2" filter="url(#glow)"/></svg>
+  <svg class="deco ds3" viewBox="0 0 24 24"><path d="M12 0L14 10 24 12 14 14 12 24 10 14 0 12 10 10Z" fill="url(#gG)" opacity=".22" filter="url(#glow)"/></svg>
+  <svg class="deco ds4" viewBox="0 0 24 24"><path d="M12 0L14 10 24 12 14 14 12 24 10 14 0 12 10 10Z" fill="#c8b8f8" opacity=".18" filter="url(#glow)"/></svg>
+  <svg class="deco ds5" viewBox="0 0 24 24"><path d="M12 0L14 10 24 12 14 14 12 24 10 14 0 12 10 10Z" fill="#fff" opacity=".15" filter="url(#glow)"/></svg>
+  <svg class="deco ds6" viewBox="0 0 24 24"><path d="M12 0L14 10 24 12 14 14 12 24 10 14 0 12 10 10Z" fill="url(#gG)" opacity=".2" filter="url(#glow)"/></svg>
+  <svg class="deco ds7" viewBox="0 0 24 24"><path d="M12 0L14 10 24 12 14 14 12 24 10 14 0 12 10 10Z" fill="#e8a8d0" opacity=".2" filter="url(#glow)"/></svg>
+  <svg class="deco ds8" viewBox="0 0 24 24"><path d="M12 0L14 10 24 12 14 14 12 24 10 14 0 12 10 10Z" fill="#ffd700" opacity=".16" filter="url(#glow)"/></svg>
+  <!-- Crescent moons -->
+  <svg class="deco dc1" viewBox="0 0 50 50"><path d="M25 5A20 20 0 1 0 25 45A15 15 0 1 1 25 5" fill="url(#gG)" opacity=".1" filter="url(#glow)"/></svg>
+  <svg class="deco dc2" viewBox="0 0 50 50"><path d="M25 5A20 20 0 1 0 25 45A15 15 0 1 1 25 5" fill="#c8b8f8" opacity=".08" filter="url(#glow)"/></svg>
+  <!-- Sparkle cross shapes -->
+  <svg class="deco dx1" viewBox="0 0 20 20"><path d="M10 0Q10 10 20 10Q10 10 10 20Q10 10 0 10Q10 10 10 0Z" fill="#ffd700" opacity=".2" filter="url(#glow)"/></svg>
+  <svg class="deco dx2" viewBox="0 0 20 20"><path d="M10 0Q10 10 20 10Q10 10 10 20Q10 10 0 10Q10 10 10 0Z" fill="#fff" opacity=".15" filter="url(#glow)"/></svg>
+</div>
+
+<!-- Morphing Celestial Body (behind cards, morphs sun→moon across phases) -->
+<div class="celestial" id="celestial">
+  <svg viewBox="0 0 200 200" id="celestialSvg">
+    <circle class="cel-glow" cx="100" cy="100" r="75" fill="none" stroke="rgba(212,165,116,0.06)" stroke-width="35" filter="url(#glowBig)"/>
+    <circle class="cel-body" id="celBody" cx="100" cy="100" r="42" fill="url(#sunG)" opacity=".5" filter="url(#glowSoft)"/>
+    <circle class="cel-inner" id="celInner" cx="90" cy="90" r="28" fill="rgba(255,255,255,0.08)"/>
+    <g class="cel-rays" id="celRays" opacity=".25">
+      <line x1="100" y1="12" x2="100" y2="38" stroke="#ffd700" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="100" y1="162" x2="100" y2="188" stroke="#ffd700" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="12" y1="100" x2="38" y2="100" stroke="#ffd700" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="162" y1="100" x2="188" y2="100" stroke="#ffd700" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="38" y1="38" x2="56" y2="56" stroke="#ffd700" stroke-width="1" stroke-linecap="round"/>
+      <line x1="162" y1="38" x2="144" y2="56" stroke="#ffd700" stroke-width="1" stroke-linecap="round"/>
+      <line x1="38" y1="162" x2="56" y2="144" stroke="#ffd700" stroke-width="1" stroke-linecap="round"/>
+      <line x1="162" y1="162" x2="144" y2="144" stroke="#ffd700" stroke-width="1" stroke-linecap="round"/>
+    </g>
+  </svg>
+</div>
+
+<!-- Audio toggle -->
+<button id="audioToggle" class="audio-btn" aria-label="Toggle music">🔇</button>
+
+<!-- Main UI -->
+<div class="ui">
+
+  <!-- ═══════ HEADER ═══════ -->
+  <div class="top-header" id="topHeader">
+    <span class="header-moon">🌙</span>
+    <span class="header-text">A special message for Nila</span>
+    <div class="header-sparkles">✦ ✧ ✦ ✧ ✦</div>
+  </div>
+
+  <!-- ═══════ PHASE DOTS ═══════ -->
+  <div class="phase-dots" id="phaseDots">
+    <div class="dot active" data-phase="0"></div>
+    <div class="dot" data-phase="1"></div>
+    <div class="dot" data-phase="2"></div>
+    <div class="dot" data-phase="3"></div>
+    <div class="dot" data-phase="4"></div>
+    <div class="dot" data-phase="5"></div>
+    <div class="dot" data-phase="6"></div>
+  </div>
+
+  <!-- ═══════ PHASE 0: INTRO ═══════ -->
+  <div class="screen active" id="intro">
+    <div class="card glass-card intro-card">
+      <p class="card-greeting">Hi Nila,</p>
+      <h2 class="card-headline">I have a birthday wish for you…</h2>
+      <button class="btn-cosmic magnetic" id="startBtn">
+        <span>CLICK TO OPEN</span>
+        <svg class="btn-arrow" viewBox="0 0 24 24" width="18" height="18"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      </button>
+      <div class="card-phase-label">PHASE <strong>01</strong> / 06</div>
+    </div>
+    <p class="bottom-hint">Stay for a moment to explore something wonderful.</p>
+  </div>
+
+  <!-- ═══════ PHASE 1: MORNING ═══════ -->
+  <div class="screen" id="morning">
+    <div class="card glass-card phase-card">
+      <div class="card-phase-label">PHASE <strong>02</strong> / 06</div>
+      <div class="phase-icon sunrise-icon">
+        <svg viewBox="0 0 120 70" width="120" height="70">
+          <line x1="60" y1="28" x2="60" y2="5" stroke="#ffd700" stroke-width="2" stroke-linecap="round" opacity=".6"><animate attributeName="opacity" values=".3;.8;.3" dur="3s" repeatCount="indefinite"/></line>
+          <line x1="82" y1="35" x2="100" y2="18" stroke="#ffd700" stroke-width="1.5" stroke-linecap="round" opacity=".5"><animate attributeName="opacity" values=".2;.7;.2" dur="3.5s" repeatCount="indefinite"/></line>
+          <line x1="38" y1="35" x2="20" y2="18" stroke="#ffd700" stroke-width="1.5" stroke-linecap="round" opacity=".5"><animate attributeName="opacity" values=".2;.7;.2" dur="3.2s" repeatCount="indefinite"/></line>
+          <line x1="95" y1="50" x2="115" y2="45" stroke="#ffa040" stroke-width="1.5" stroke-linecap="round" opacity=".4"/>
+          <line x1="25" y1="50" x2="5" y2="45" stroke="#ffa040" stroke-width="1.5" stroke-linecap="round" opacity=".4"/>
+          <path d="M15 55 Q60 20 105 55" fill="url(#sunG)" opacity=".85" filter="url(#glowSoft)"/>
+          <line x1="5" y1="55" x2="115" y2="55" stroke="#ffd700" stroke-width=".5" opacity=".25"/>
+        </svg>
+      </div>
+      <h2 class="card-headline" id="morningText"></h2>
+      <p class="card-body">A new beginning… just like you bring light into my life.<br/><em>You are the sunrise I never want to miss.</em></p>
+      <button class="btn-cosmic magnetic" id="morningBtn">
+        <span>CONTINUE</span>
+        <svg class="btn-arrow" viewBox="0 0 24 24" width="18" height="18"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════ PHASE 2: NOON ═══════ -->
+  <div class="screen" id="noon">
+    <div class="card glass-card phase-card">
+      <div class="card-phase-label">PHASE <strong>03</strong> / 06</div>
+      <div class="phase-icon sun-icon">
+        <svg viewBox="0 0 100 100" width="80" height="80">
+          <circle cx="50" cy="50" r="22" fill="url(#sunG)" filter="url(#glowSoft)">
+            <animate attributeName="r" values="22;24;22" dur="4s" repeatCount="indefinite"/>
+          </circle>
+          <g opacity=".5">
+            <line x1="50" y1="5" x2="50" y2="20" stroke="#ffd700" stroke-width="2" stroke-linecap="round"><animate attributeName="y1" values="5;3;5" dur="3s" repeatCount="indefinite"/></line>
+            <line x1="50" y1="80" x2="50" y2="95" stroke="#ffd700" stroke-width="2" stroke-linecap="round"/>
+            <line x1="5" y1="50" x2="20" y2="50" stroke="#ffd700" stroke-width="2" stroke-linecap="round"/>
+            <line x1="80" y1="50" x2="95" y2="50" stroke="#ffd700" stroke-width="2" stroke-linecap="round"/>
+            <line x1="18" y1="18" x2="28" y2="28" stroke="#ffd700" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="72" y1="18" x2="82" y2="28" stroke="#ffd700" stroke-width="1.5" stroke-linecap="round" transform="rotate(90 77 23)"/>
+            <line x1="18" y1="82" x2="28" y2="72" stroke="#ffd700" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="72" y1="72" x2="82" y2="82" stroke="#ffd700" stroke-width="1.5" stroke-linecap="round"/>
+          </g>
+          <circle cx="50" cy="50" r="14" fill="rgba(255,255,255,.15)"/>
+        </svg>
+      </div>
+      <h2 class="card-headline" id="noonText"></h2>
+      <p class="card-body">In the hardest moments of my life, when no one stood beside me…<br/><strong>you did. You were my only support.</strong></p>
+      <button class="btn-cosmic magnetic" id="noonBtn">
+        <span>CONTINUE</span>
+        <svg class="btn-arrow" viewBox="0 0 24 24" width="18" height="18"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════ PHASE 3: EVENING ═══════ -->
+  <div class="screen" id="evening">
+    <div class="card glass-card phase-card">
+      <div class="card-phase-label">PHASE <strong>04</strong> / 06</div>
+      <div class="phase-icon sunset-icon">
+        <svg viewBox="0 0 120 70" width="120" height="70">
+          <rect x="0" y="50" width="120" height="20" fill="rgba(100,40,80,0.3)"/>
+          <path d="M10 50 Q60 10 110 50" fill="url(#sunG)" opacity=".7" filter="url(#glowSoft)"/>
+          <line x1="60" y1="22" x2="60" y2="8" stroke="#ff8844" stroke-width="1.5" stroke-linecap="round" opacity=".5"><animate attributeName="opacity" values=".3;.6;.3" dur="4s" repeatCount="indefinite"/></line>
+          <line x1="80" y1="30" x2="95" y2="18" stroke="#ff6b35" stroke-width="1" stroke-linecap="round" opacity=".4"/>
+          <line x1="40" y1="30" x2="25" y2="18" stroke="#ff6b35" stroke-width="1" stroke-linecap="round" opacity=".4"/>
+          <line x1="5" y1="50" x2="115" y2="50" stroke="#d4a574" stroke-width=".8" opacity=".3"/>
+        </svg>
+      </div>
+      <h2 class="card-headline" id="eveningText"></h2>
+      <p class="card-body">The golden hours remind me of every laugh, every memory we share.<br/><em>You make life warmer and brighter.</em></p>
+      <button class="btn-cosmic magnetic" id="eveningBtn">
+        <span>CONTINUE</span>
+        <svg class="btn-arrow" viewBox="0 0 24 24" width="18" height="18"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════ PHASE 4: NIGHT ═══════ -->
+  <div class="screen" id="night">
+    <div class="card glass-card phase-card">
+      <div class="card-phase-label">PHASE <strong>05</strong> / 06</div>
+      <div class="phase-icon crescent-icon">
+        <svg viewBox="0 0 80 80" width="70" height="70">
+          <path d="M40 5A35 35 0 1 0 40 75A28 28 0 1 1 40 5" fill="url(#gG)" opacity=".8" filter="url(#glowSoft)">
+            <animate attributeName="opacity" values=".6;.9;.6" dur="5s" repeatCount="indefinite"/>
+          </path>
+          <circle cx="22" cy="25" r="2" fill="#ffd700" opacity=".4" filter="url(#glow)"><animate attributeName="opacity" values=".2;.6;.2" dur="2s" repeatCount="indefinite"/></circle>
+          <circle cx="55" cy="15" r="1.5" fill="#fff" opacity=".3" filter="url(#glow)"><animate attributeName="opacity" values=".1;.5;.1" dur="2.5s" repeatCount="indefinite"/></circle>
+          <circle cx="15" cy="55" r="1" fill="#c8b8f8" opacity=".3" filter="url(#glow)"><animate attributeName="opacity" values=".15;.4;.15" dur="3s" repeatCount="indefinite"/></circle>
+        </svg>
+      </div>
+      <h2 class="card-headline" id="nightText"></h2>
+      <p class="card-body">The world is quiet now…<br/><em>something magical is about to happen.</em></p>
+      <button class="btn-cosmic magnetic" id="nightBtn">
+        <span>WHAT IS IT?</span>
+        <svg class="btn-arrow" viewBox="0 0 24 24" width="18" height="18"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════ PHASE 5: MOON ═══════ -->
+  <div class="screen" id="moonPhase">
+    <div class="card glass-card phase-card moon-card">
+      <div class="card-phase-label">PHASE <strong>06</strong> / 06</div>
+      <div class="phase-icon fullmoon-icon">
+        <svg viewBox="0 0 100 100" width="90" height="90">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(220,220,255,0.08)" stroke-width="15" filter="url(#glowBig)">
+            <animate attributeName="stroke-width" values="15;20;15" dur="6s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="50" cy="50" r="32" fill="url(#moonG)" filter="url(#glowSoft)">
+            <animate attributeName="r" values="32;34;32" dur="5s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="38" cy="38" r="8" fill="rgba(180,175,165,0.3)"/>
+          <circle cx="58" cy="55" r="5" fill="rgba(180,175,165,0.2)"/>
+          <circle cx="42" cy="58" r="3.5" fill="rgba(180,175,165,0.15)"/>
+          <circle cx="55" cy="35" r="4" fill="rgba(200,195,185,0.15)"/>
+          <circle cx="50" cy="50" r="20" fill="rgba(255,255,255,0.06)"/>
+        </svg>
+      </div>
+      <h2 class="card-headline" id="moonText"></h2>
+      <p class="card-body">Look at the moon…<br/><strong>Just like you, it shines even in darkness.</strong><br/><em>You are the quiet strength in my life.</em></p>
+      <button class="btn-cosmic magnetic" id="moonBtn">
+        <span>SEE YOUR WISH ✨</span>
+        <svg class="btn-arrow" viewBox="0 0 24 24" width="18" height="18"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════ PHASE 6: FINAL ═══════ -->
+  <div class="screen" id="final">
+    <div id="confetti-container"></div>
+    <div class="card glass-card final-card">
+      <div class="final-sparkle">✦ ✧ ✦ ✧ ✦</div>
+      <h1 class="final-title">
+        <span class="final-sub">Happy Birthday</span>
+        <span class="final-name">Nila</span>
+      </h1>
+      <div class="final-emoji-row">
+        <svg viewBox="0 0 200 50" width="200" height="50" style="display:inline-block">
+          <circle cx="30" cy="25" r="14" fill="url(#moonG)" filter="url(#glowSoft)" opacity=".8"/>
+          <circle cx="24" cy="20" r="3.5" fill="rgba(180,175,165,.25)"/>
+          <rect x="85" y="12" width="30" height="28" rx="3" fill="none" stroke="url(#gG)" stroke-width="1" opacity=".6"/>
+          <rect x="88" y="8" width="24" height="6" rx="2" fill="url(#sunG)" opacity=".5"/>
+          <line x1="93" y1="18" x2="93" y2="36" stroke="url(#gG)" stroke-width=".5" opacity=".3"/>
+          <line x1="100" y1="18" x2="100" y2="36" stroke="url(#gG)" stroke-width=".5" opacity=".3"/>
+          <line x1="107" y1="18" x2="107" y2="36" stroke="url(#gG)" stroke-width=".5" opacity=".3"/>
+          <circle cx="100" cy="6" r="2" fill="#ffd700" filter="url(#glow)"><animate attributeName="opacity" values=".5;1;.5" dur="1.5s" repeatCount="indefinite"/></circle>
+          <polygon points="170,5 173,18 187,20 175,27 178,40 170,32 162,40 165,27 153,20 167,18" fill="url(#gG)" opacity=".6" filter="url(#glow)"><animate attributeName="opacity" values=".4;.8;.4" dur="2s" repeatCount="indefinite"/></polygon>
+        </svg>
+      </div>
+      <div class="final-line"></div>
+      <p class="final-message">
+        From the first light of morning to the glow of the moon —<br/>
+        you are the most beautiful chapter of every day.<br/><br/>
+        <em>May your dreams shine as bright as tonight.</em> 🤍
+      </p>
+      <div class="final-hearts">💛 🤍 💜</div>
+      <button class="btn-cosmic magnetic" id="replayBtn">
+        <span>REPLAY ↻</span>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
